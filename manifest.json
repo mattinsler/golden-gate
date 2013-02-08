@@ -1,0 +1,22 @@
+{
+  "manifest_version": 2,
+  
+  "name": "Golden Gate",
+  "version": "1.0.0",
+  "description": "All you base are belong to us",
+  
+  "browser_action": {
+    "default_icon": "ggbridge_48x48.png",
+    "default_popup": "popup.html"
+  },
+  
+  "content_scripts": [{
+    "matches": ["https://plus.google.com/hangouts/_/*"],
+    "js": ["javascripts/lib/jquery.min.js", "javascripts/hangout.js", "javascripts/lib/socket.io.js", "javascripts/bulkhead.js"]
+  }],
+  
+  "permissions": [
+    "storage",
+    "http://tenderloin-sf.herokuapp.com/*"
+  ]
+}
