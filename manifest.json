@@ -12,7 +12,7 @@
   
   "content_scripts": [{
     "matches": ["https://plus.google.com/hangouts/_/*"],
-    "js": ["javascripts/lib/jquery.min.js", "javascripts/hangout.js", "javascripts/lib/socket.io.js", "javascripts/bulkhead.js"]
+    "js": ["javascripts/lib/jquery.min.js", "javascripts/lib/socket.io.js", "javascripts/lib/buzz.js", "javascripts/hangout.js", "javascripts/bulkhead.js"]
   }],
   
   "permissions": [

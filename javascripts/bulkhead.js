@@ -1,5 +1,5 @@
-// var office_root = 'http://tenderloin-sf.herokuapp.com/';
-var office_root = 'http://localhost:3000/';
+var office_root = 'http://tenderloin-sf.herokuapp.com/';
+// var office_root = 'http://localhost:3000/';
 
 
 var Bulkhead = function() {
@@ -18,7 +18,7 @@ Bulkhead.prototype.click = function(button) {
 };
 
 Bulkhead.prototype.is_microphone_on = function() {
-  this.microphone_button.attr('aria-pressed').toString() === 'true';
+  return (this.microphone_button.attr('aria-pressed').toString() === 'false');
 };
 
 Bulkhead.prototype.microphone_on = function() {
@@ -27,14 +27,14 @@ Bulkhead.prototype.microphone_on = function() {
   }
 };
 
-Bulkhead.prototype.is_microphone_off = function() {
+Bulkhead.prototype.microphone_off = function() {
   if (this.is_microphone_on()) {
     this.click(this.microphone_button);
   }
 };
 
 Bulkhead.prototype.is_camera_on = function() {
-  this.camera_button.attr('aria-pressed').toString() === 'true';
+  return (this.camera_button.attr('aria-pressed').toString() === 'false');
 };
 
 Bulkhead.prototype.camera_on = function() {
@@ -47,6 +47,10 @@ Bulkhead.prototype.camera_off = function() {
   if (this.is_camera_on()) {
     this.click(this.camera_button);
   }
+};
+
+Bulkhead.prototype.play_sound = function(filename) {
+  new buzz.sound(office_root + 'sounds/' + filename, {autoplay: true});
 };
 
 
@@ -72,14 +76,12 @@ var connect = function(office) {
   
   if (!office || office === '') { throw new Error('Must supply an office name'); }
   
-  console.log(office_root + office);
   var socket = io.connect(office_root + office);
-  $('body').data({socket: socket});
   
   socket.on('connect', function() {
     console.log('Connected to Tenderloin!');
   });
-
+  
   socket.on('message', function(data) {
     execute_snippet(data);
   });
@@ -99,3 +101,14 @@ chrome.storage.local.get('office', function(data) {
     connect(data.office);
   }
 });
+// 
+// $('body').append('<script src="http://localhost:3000/socket.io/socket.io.js"></script>');
+// 
+// socket = io.connect('http://localhost:3000/sf');
+// 
+// ['connect', 'connecting', 'error', 'anything', 'message', 'disconnect'].forEach(function(e) {
+//   socket.on(e, function() {
+//     console.log(e);
+//     console.log(arguments);
+//   });
+// });
