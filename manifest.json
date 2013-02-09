@@ -16,7 +16,11 @@
   }],
   
   "permissions": [
+    "cookies",
+    "tabs",
     "storage",
+    
+    "http://tenderloin.localhost.dev/*",
     "http://tenderloin-sf.herokuapp.com/*"
   ]
 }

@@ -1,32 +1,49 @@
-var office_root = 'http://tenderloin-sf.herokuapp.com/';
-// var office_root = 'http://localhost:3000/';
-
-
-
-var login = function(office) {
-  $('#status').html('Logged in as ' + office);
-};
-
-var fill_offices = function(offices) {
-  $('select').html('<option></option>' + offices.map(function(office) {
-    return '<option value="' + office + '">' + office + '</option>';
+var fill_rooms = function(err, rooms) {
+  if (err || !rooms) { return; }
+  $('select').html('<option></option>' + rooms.map(function(room) {
+    return '<option value="' + room + '">' + room + '</option>';
   }).join(''));
 }
 
-$(function() {
-  $.getJSON(office_root + 'api/offices', fill_offices);
+var template = function(name) {
+  return $('#templates [name="' + name + '"]').html();
+}
+
+var on_logged_in = function() {
+  var claim = function(room) {
+    $('#status').html('You have claimed: ' + room);
+  };
   
-  $('select').on('change', function() {
-    var office = $(this).val();
-    if (office !== '') {
-      chrome.storage.local.set({office: office});
-      login(office);
+  $('#content').html(template('logged_in'));
+  GG.get_json('/api/rooms', fill_rooms);
+  
+  chrome.storage.local.get('room', function(data) {
+    if (data.room) {
+      claim(data.room);
     }
   });
   
-  chrome.storage.local.get('office', function(data) {
-    if (data.office) {
-      login(data.office);
+  $('select').on('change', function() {
+    var room = $(this).val();
+    if (room !== '') {
+      chrome.storage.local.set({room: room});
+      claim(room);
+    }
+  });
+};
+
+var on_logged_out = function() {
+  $('#content').html(template('login'));
+};
+
+
+$(function() {
+  GG.is_logged_in(function(logged_in) {
+    console.log(logged_in);
+    if (logged_in) {
+      on_logged_in();
+    } else {
+      on_logged_out();
     }
   });
 });

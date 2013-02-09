@@ -1,8 +1,3 @@
-var office_root = 'http://tenderloin-sf.herokuapp.com/';
-// var office_root = 'http://localhost:3000/';
-
-golden_gate = window.golden_gate = {};
-
 // Bulkhead
 
 var Bulkhead = function() {
@@ -58,7 +53,7 @@ Bulkhead.prototype.play_sound = function(filename) {
   if (!golden_gate.sounds) { golden_gate.sounds = {}; }
   
   if (!is_url_rx.test(filename)) {
-    filename = office_root + 'sounds/' + filename;
+    filename = golden_gate.tenderloin_url + '/sounds/' + filename;
   }
   var sound = new buzz.sound(filename);
   var current = golden_gate.sounds.current_sound;
@@ -104,17 +99,17 @@ var execute_snippet = function(snippet) {
 };
 
 
-var connect = function(office) {
-  console.log('Connecting to ' + office);
+var connect = function(room) {
+  console.log('Connecting to ' + room);
   
-  if (!office || office === '') { throw new Error('Must supply an office name'); }
+  if (!room || room === '') { throw new Error('Must supply an room name'); }
   
   if (golden_gate.socket) {
     golden_gate.socket.disconnect();
     golden_gate.socket = null;
   }
   
-  var socket = golden_gate.socket = io.connect(office_root + office);
+  var socket = golden_gate.socket = io.connect(golden_gate.tenderloin_url + '/' + room);
   
   socket.on('connect', function() {
     console.log('Connected to Tenderloin!');
@@ -128,14 +123,14 @@ var connect = function(office) {
 
 chrome.storage.onChanged.addListener(function(changes, namespace) {
   for (k in changes) {
-    if (k === 'office') {
+    if (k === 'room') {
       connect(changes[k].newValue);
     }
   }
 });
 
-chrome.storage.local.get('office', function(data) {
-  if (data.office) {
-    connect(data.office);
+chrome.storage.local.get('room', function(data) {
+  if (data.room) {
+    connect(data.room);
   }
 });
