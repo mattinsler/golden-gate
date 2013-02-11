@@ -11,15 +11,10 @@ var get_cookie = function(callback) {
   var url = GG.get('tenderloin.url');
   if (!url) { return callback(); }
   chrome.cookies.get({url: url, name: 'connect.sid'}, function(cookie) {
-    if (!cookie || cookie.value) { return callback(); }
+    if (!cookie || !cookie.value) { return callback(); }
     callback(cookie.value);
   });
 };
-
-GG.once('initialized', function() {
-  var cookie = GG.get('tenderloin.cookie');
-  cookie ? on_cookie_change(cookie) : get_cookie(on_cookie_change);
-});
 
 var on_cookie_change = function(cookie) {
   if (!cookie) { return GG.set({'tenderloin.cookie': null, 'tenderloin.logged_in': false}); }
@@ -29,6 +24,13 @@ var on_cookie_change = function(cookie) {
     GG.set({'tenderloin.cookie': null, 'tenderloin.logged_in': false});
   });
 };
+
+// Check for tenderloin.url
+
+GG.once('initialized', function() {
+  var cookie = GG.get('tenderloin.cookie');
+  cookie ? on_cookie_change(cookie) : get_cookie(on_cookie_change);
+});
 
 chrome.cookies.onChanged.addListener(function(change) {
   console.log(change);

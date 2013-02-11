@@ -74,8 +74,6 @@ var disconnect = function() {
 };
 
 var connect = function(room) {
-  // console.log('Connecting to ' + org + '/' + room);
-  
   if (!room || room === '') { throw new Error('Must supply an room name'); }
   
   var url = GG.create_url(GG.encode(room));
@@ -135,7 +133,7 @@ var on_room_change = function(room, old_room) {
   }
 }
 
-GG.on('change:room', on_room_change);
+GG.on('change:tenderloin.room', on_room_change);
 
 GG.once('initialized', function() {
   console.log('initialized');

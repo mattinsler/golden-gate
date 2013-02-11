@@ -85,6 +85,8 @@ GG.on('change:tenderloin.logged_in', function(logged_in) {
   logged_in ? on_logged_in() : on_logged_out();
 });
 
+// Check for tenderloin.url
+
 GG.once('initialized', function() {
   GG.get('tenderloin.logged_in') ? on_logged_in() : on_logged_out();
 });

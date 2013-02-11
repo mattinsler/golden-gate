@@ -7,8 +7,8 @@ var mouse_event = function(name, target) {
 // Bulkhead
 
 var Bulkhead = GG.Bulkhead = function() {
-  this.microphone_button = $('[role="button"][aria-label^="Microphone"]');
-  this.camera_button = $('[role="button"][aria-label^="Camera"]');
+  this.microphone_button = $('[role="button"][aria-label^="Microphone "]');
+  this.camera_button = $('[role="button"][aria-label^="Camera "]');
 };
 
 Bulkhead.prototype.click = function(button) {
