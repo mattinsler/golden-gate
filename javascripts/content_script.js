@@ -5,8 +5,8 @@ var execute_snippet = function(snippet) {
   try {
     var gg = new GG.Bulkhead();
     eval(snippet);
-  } catch (e) {
-    console.error(e);
+  } catch (err) {
+    console.error(err.stack);
   }
 };
 
@@ -17,13 +17,14 @@ var disconnect = function() {
   }
 };
 
-var connect = function(org, room) {
-  console.log('Connecting to ' + org + '/' + room);
+var connect = function(room) {
+  // console.log('Connecting to ' + org + '/' + room);
   
-  if (!org || org === '') { throw new Error('Must supply an org name'); }
   if (!room || room === '') { throw new Error('Must supply an room name'); }
-
-  var socket = GG.socket = io.connect(GG.tenderloin.url + '/organizations/' + org + '/rooms/' + room);
+  
+  var url = GG.create_url(GG.encode(room));
+  console.log('Connecting to ' + url);
+  var socket = GG.socket = io.connect(url);
   
   socket.on('connect', function() {
     console.log('Connected to Tenderloin!');
@@ -35,15 +36,15 @@ var connect = function(org, room) {
 };
 
 var on_room_change = function(room, old_room) {
-  var org = GG.get('tenderloin.organization');
-  if (org && org !== '' && room && room !== '') {
+  if (room && room !== '') {
     disconnect();
-    connect(org, room);
+    connect(room);
   }
 }
 
 GG.on('change:room', on_room_change);
 
 GG.once('initialized', function() {
+  console.log('initialized');
   on_room_change(GG.get('tenderloin.room'));
 });

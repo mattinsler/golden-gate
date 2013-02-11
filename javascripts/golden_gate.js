@@ -87,15 +87,28 @@ window.golden_gate = window.GG = {
     chrome.storage.local.set(o, callback);
   },
   
+  encode: function(v) {
+    return encodeURIComponent(v).replace(/\./g, '-');
+  },
+
+  decode: function(v) {
+    return decodeURIComponent(v.replace(/-/g, '.'));
+  },
+  
+  create_url: function(path) {
+    if (!new RegExp('^https?://').test(path)) {
+      path = this.get('tenderloin.url').replace(new RegExp('/+$'), '') + '/' + path.replace(new RegExp('^/+'), '');
+    }
+    return path;
+  },
+  
   get_json: function(url, opts, callback) {
     if (typeof(opts) === 'function') {
       callback = opts;
       opts = {};
     }
 
-    if (!new RegExp('^https?://').test(url)) {
-      url = this.get('tenderloin.url').replace(new RegExp('/+$'), '') + '/' + url.replace(new RegExp('^/+'), '');
-    }
+    url = this.create_url(url);
 
     var cookie = opts.cookie || this.get('tenderloin.cookie') || '';
     var data = opts.data || {};

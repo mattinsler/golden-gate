@@ -59,7 +59,7 @@ Bulkhead.prototype.play_sound = function(filename) {
   if (!GG.sounds) { GG.sounds = {}; }
   
   if (!is_url_rx.test(filename)) {
-    filename = GG.tenderloin.url + '/sounds/' + filename;
+    filename = GG.create_url('/sounds/' + filename);
   }
   var sound = new buzz.sound(filename);
   var current = GG.sounds.current_sound;
