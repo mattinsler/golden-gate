@@ -1,70 +1,44 @@
-var oauth = ChromeExOAuth.initBackgroundPage({
-  'request_url' : 'https://www.google.com/accounts/OAuthGetRequestToken',
-  'authorize_url' : 'https://www.google.com/accounts/OAuthAuthorizeToken',
-  'access_url' : 'https://www.google.com/accounts/OAuthGetAccessToken',
-  'consumer_key' : 'anonymous',
-  'consumer_secret' : 'anonymous',
-  'scope' : 'http://www.google.com/m8/feeds/',
-  'app_name' : 'Sample - OAuth Contacts'
-});
+GG.on('all', function() { console.log(arguments); });
 
-var contacts = null;
-
-function setIcon() {
-  if (oauth.hasToken()) {
-    // chrome.browserAction.setIcon({ 'path' : 'img/icon-19-on.png'});
-  } else {
-    // chrome.browserAction.setIcon({ 'path' : 'img/icon-19-off.png'});
-  }
-};
-
-function onContacts(text, xhr) {
-  contacts = [];
-  var data = JSON.parse(text);
-  for (var i = 0, entry; entry = data.feed.entry[i]; i++) {
-    var contact = {
-      'name' : entry['title']['$t'],
-      'id' : entry['id']['$t'],
-      'emails' : []
-    };
-
-    if (entry['gd$email']) {
-      var emails = entry['gd$email'];
-      for (var j = 0, email; email = emails[j]; j++) {
-        contact['emails'].push(email['address']);
-      }
-    }
-
-    if (!contact['name']) {
-      contact['name'] = contact['emails'][0] || "<Unknown>";
-    }
-    contacts.push(contact);
-  }
-
-  chrome.tabs.create({ 'url' : 'contacts.html'});
-};
-
-function getContacts() {
-  console.log('getContacts');
-  oauth.authorize(function() {
-    console.log("on authorize");
-    setIcon();
-    var url = "http://www.google.com/m8/feeds/contacts/default/full";
-    oauth.sendSignedRequest(url, onContacts, {
-      'parameters' : {
-        'alt' : 'json',
-        'max-results' : 100
-      }
-    });
+var validate_cookie = function(cookie, callback) {
+  GG.get_json('/api/user', {cookie: cookie}, function(err) {
+    if (err) { return callback(false); }
+    callback(true);
   });
 };
 
-function logout() {
-  oauth.clearTokens();
-  setIcon();
+var get_cookie = function(callback) {
+  var url = GG.get('tenderloin.url');
+  if (!url) { return callback(); }
+  chrome.cookies.get({url: url, name: 'connect.sid'}, function(cookie) {
+    if (!cookie || cookie.value) { return callback(); }
+    callback(cookie.value);
+  });
 };
 
-setIcon();
-// chrome.browserAction.onClicked.addListener(getContacts);
-getContacts();
-console.log('browserAction injected');
+GG.once('initialized', function() {
+  var cookie = GG.get('tenderloin.cookie');
+  cookie ? on_cookie_change(cookie) : get_cookie(on_cookie_change);
+});
+
+var on_cookie_change = function(cookie) {
+  if (!cookie) { return GG.set({'tenderloin.cookie': null, 'tenderloin.logged_in': false}); }
+  
+  validate_cookie(cookie, function(valid) {
+    if (valid) { return GG.set({'tenderloin.cookie': cookie, 'tenderloin.logged_in': true}); }
+    GG.set({'tenderloin.cookie': null, 'tenderloin.logged_in': false});
+  });
+};
+
+chrome.cookies.onChanged.addListener(function(change) {
+  console.log(change);
+  var url = GG.get('tenderloin.url');
+  if (!url) { return; }
+  var match = new RegExp('https?://([^\/]+)').exec(url);
+  if (!match) { return; }
+  var domain = match[1];
+  
+  if (change.cookie.domain !== domain || change.cookie.path !== '/') { return; }
+  
+  change.removed ? on_cookie_change() : on_cookie_change(change.cookie.value);
+});

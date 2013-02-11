@@ -1,6 +1,12 @@
+var mouse_event = function(name, target) {
+  var evt = document.createEvent('MouseEvents');
+  evt.initMouseEvent(name, true, true, document.defaultView, 0, 0, 0, 0, 0, false, false, false, false, 0, target);
+  target.dispatchEvent(evt);
+};
+
 // Bulkhead
 
-var Bulkhead = function() {
+var Bulkhead = GG.Bulkhead = function() {
   this.microphone_button = $('[role="button"][aria-label^="Microphone"]');
   this.camera_button = $('[role="button"][aria-label^="Camera"]');
 };
@@ -50,87 +56,34 @@ Bulkhead.prototype.camera_off = function() {
 var is_url_rx = new RegExp('^https?://');
 
 Bulkhead.prototype.play_sound = function(filename) {
-  if (!golden_gate.sounds) { golden_gate.sounds = {}; }
+  if (!GG.sounds) { GG.sounds = {}; }
   
   if (!is_url_rx.test(filename)) {
-    filename = golden_gate.tenderloin_url + '/sounds/' + filename;
+    filename = GG.tenderloin.url + '/sounds/' + filename;
   }
   var sound = new buzz.sound(filename);
-  var current = golden_gate.sounds.current_sound;
+  var current = GG.sounds.current_sound;
   
   if (current) {
     current.fadeOut(2000, function() {
-      golden_gate.sounds.current_sound = sound;
+      GG.sounds.current_sound = sound;
       sound.play();
     });
   } else {
-    golden_gate.sounds.current_sound = sound;
+    GG.sounds.current_sound = sound;
     sound.play();
   }
   
   sound.bind('ended', function() {
-    delete golden_gate.sounds.current_sound;
+    delete GG.sounds.current_sound;
   });
 };
 
 Bulkhead.prototype.stop_sound = function() {
-  if (golden_gate.sounds && golden_gate.sounds.current_sound) {
-    golden_gate.sounds.current_sound.fadeOut(2000);
-    delete golden_gate.sounds.current_sound;
+  if (GG.sounds && GG.sounds.current_sound) {
+    GG.sounds.current_sound.fadeOut(2000);
+    delete GG.sounds.current_sound;
   }
 }
 
 // Bulkhead: End
-
-var mouse_event = function(name, target) {
-  var evt = document.createEvent('MouseEvents');
-  evt.initMouseEvent(name, true, true, document.defaultView, 0, 0, 0, 0, 0, false, false, false, false, 0, target);
-  target.dispatchEvent(evt);
-};
-
-var execute_snippet = function(snippet) {
-  console.log(snippet);
-  try {
-    var bulkhead = new Bulkhead();
-    eval(snippet);
-  } catch (e) {
-    console.error(e);
-  }
-};
-
-
-var connect = function(room) {
-  console.log('Connecting to ' + room);
-  
-  if (!room || room === '') { throw new Error('Must supply an room name'); }
-  
-  if (golden_gate.socket) {
-    golden_gate.socket.disconnect();
-    golden_gate.socket = null;
-  }
-  
-  var socket = golden_gate.socket = io.connect(golden_gate.tenderloin_url + '/' + room);
-  
-  socket.on('connect', function() {
-    console.log('Connected to Tenderloin!');
-  });
-  
-  socket.on('message', function(data) {
-    execute_snippet(data);
-  });
-};
-
-
-chrome.storage.onChanged.addListener(function(changes, namespace) {
-  for (k in changes) {
-    if (k === 'room') {
-      connect(changes[k].newValue);
-    }
-  }
-});
-
-chrome.storage.local.get('room', function(data) {
-  if (data.room) {
-    connect(data.room);
-  }
-});

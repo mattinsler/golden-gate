@@ -6,24 +6,51 @@
     <link rel="stylesheet" type="text/css" href="stylesheets/style.css" />
     
     <script src="javascripts/lib/jquery.min.js"></script>
-    
+    <script src="javascripts/lib/async.js"></script>
+    <script src="javascripts/lib/underscore.min.js"></script>
+    <script src="javascripts/lib/backbone.min.js"></script>
     <script src="javascripts/golden_gate.js"></script>
+    
+    <script src="javascripts/lib/bootstrap.min.js"></script>
     <script src="javascripts/popup.js"></script>
   </head>
   
   <body>
-    <header>Golden Gate</header>
-    <div id="content"></div>
+    <header>
+      <img src="images/ggbridge_48x48.png" />
+      Golden Gate
+    </header>
+    <div class="background">
+    </div>
+    
+    <div class="container-fluid">
+      <div class="row-fluid">
+        <div id="content" class="span12">
+          <p style="text-align:center;">
+            Connecting...
+          </p>
+        </div>
+      </div>
+    </div>
+    
     
     <div id="templates" style="display:none;">
       <script type="x-template" name="login">
-        <a href="http://tenderloin.localhost.dev" target="_blank">Login to Tenderloin</a>
+        <div style="text-align:center;margin:20px 0;">
+          <a href="http://tenderloin.localhost.dev" class="btn btn-primary" target="_blank">Login to Tenderloin</a>
+        </div>
       </script>
       
       <script type="x-template" name="logged_in">
-        <p id="status">You have no claimed a room yet.</p>
-        Claim room: <select></select>
-        <p><a href="http://tenderloin.localhost.dev/auth/logout">Logout</a></p>
+        <div style="text-align:center;margin:20px 0;">
+          <form style="display:inline-block;text-align:left;">
+            <label>Organization</label>
+            <select class="organization"></select>
+        
+            <label>Room</label>
+            <select class="room"></select>
+          </form>
+        </div>
       </script>
     </div
   </body>
