@@ -12,6 +12,7 @@
   
   "content_scripts": [{
     "matches": ["https://plus.google.com/hangouts/_/*"],
+    "css": ["stylesheets/content_script.css"],
     "js": [
       // golden-gate dependencies
       "javascripts/lib/jquery.min.js", "javascripts/lib/async.js", "javascripts/lib/underscore.min.js", "javascripts/lib/backbone.min.js",
@@ -23,6 +24,10 @@
       "javascripts/content_script.js"
     ]
   }],
+  
+  "web_accessible_resources": [
+    "images/ggbridge_48x48.png"
+  ],
   
   "background": {
     "scripts": [
