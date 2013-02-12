@@ -26,7 +26,7 @@
     <div class="container-fluid">
       <div class="row-fluid">
         <div id="content" class="span12">
-          <p style="text-align:center;">
+          <p class="text-center">
             Connecting...
           </p>
         </div>
@@ -35,22 +35,28 @@
     
     
     <div id="templates" style="display:none;">
-      <script type="x-template" name="login">
-        <div style="text-align:center;margin:20px 0;">
-          <a href="http://tenderloin.localhost.dev" class="btn btn-primary" target="_blank">Login to Tenderloin</a>
-        </div>
+      <script type="x-template" name="no-tenderloin-url">
+        <p class="text-center">
+          To initialize Golden Gate, just navigate to your Tenderloin homepage
+        </p>
       </script>
       
-      <script type="x-template" name="logged_in">
-        <div style="text-align:center;margin:20px 0;">
-          <form style="display:inline-block;text-align:left;">
+      <script type="x-template" name="login">
+        <p class="text-center">
+          <a href="http://tenderloin.localhost.dev" class="btn btn-primary" target="_blank">Login to Tenderloin</a>
+        </p>
+      </script>
+      
+      <script type="x-template" name="logged-in">
+        <p class="text-center">
+          <form>
             <label>Organization</label>
             <select class="organization"></select>
         
             <label>Room</label>
             <select class="room"></select>
           </form>
-        </div>
+        </p>
       </script>
     </div
   </body>

@@ -25,15 +25,7 @@ var on_cookie_change = function(cookie) {
   });
 };
 
-// Check for tenderloin.url
-
-GG.once('initialized', function() {
-  var cookie = GG.get('tenderloin.cookie');
-  cookie ? on_cookie_change(cookie) : get_cookie(on_cookie_change);
-});
-
-chrome.cookies.onChanged.addListener(function(change) {
-  console.log(change);
+var cookie_change_listener = function(change) {
   var url = GG.get('tenderloin.url');
   if (!url) { return; }
   var match = new RegExp('https?://([^\/]+)').exec(url);
@@ -43,4 +35,19 @@ chrome.cookies.onChanged.addListener(function(change) {
   if (change.cookie.domain !== domain || change.cookie.path !== '/') { return; }
   
   change.removed ? on_cookie_change() : on_cookie_change(change.cookie.value);
+};
+
+var initialize = function() {
+  chrome.cookies.onChanged.addListener(cookie_change_listener);
+  
+  var cookie = GG.get('tenderloin.cookie');
+  cookie ? on_cookie_change(cookie) : get_cookie(on_cookie_change);
+};
+
+GG.once('initialized', function() {
+  if (GG.get('tenderloin.url')) {
+    initialize();
+  } else {
+    GG.once('change:tenderloin.url', initialize);
+  }
 });

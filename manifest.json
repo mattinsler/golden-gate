@@ -11,12 +11,19 @@
   },
   
   "content_scripts": [{
-    "matches": ["https://plus.google.com/hangouts/_/*"],
-    "css": ["stylesheets/content_script.css"],
+    "matches": ["http://*/*", "https://*/*"],
     "js": [
       // golden-gate dependencies
       "javascripts/lib/jquery.min.js", "javascripts/lib/async.js", "javascripts/lib/underscore.min.js", "javascripts/lib/backbone.min.js",
       "javascripts/golden_gate.js",
+      "javascripts/check_for_tenderloin.js"
+    ]
+  }, {
+    "matches": ["https://plus.google.com/hangouts/_/*"],
+    "css": ["stylesheets/content_script.css"],
+    "js": [
+      // golden-gate comes from above content script
+      
       // bulkhead dependencies
       "javascripts/lib/socket.io.js", "javascripts/lib/buzz.js",
       "javascripts/bulkhead.js",
@@ -43,6 +50,7 @@
     "tabs",
     "storage",
     "background",
+    "webNavigation",
     
     "http://tenderloin.localhost.dev/*",
     "http://tenderloin-sf.herokuapp.com/*"

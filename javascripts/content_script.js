@@ -2,9 +2,12 @@ GG.on('all', function() { console.log(arguments); });
 
 var $status = $('<span>');
 var $el = $('<div id="golden-gate">')
-  .append('<img src="' + chrome.extension.getURL('/images/ggbridge_48x48.png') + '" />')
-  .append($status)
-  .append($('<span>').html('_').addClass('blink'));
+  .append(
+    $('<div>').addClass('wrapper')
+      .append('<img src="' + chrome.extension.getURL('/images/ggbridge_48x48.png') + '" />')
+      .append($status)
+      .append($('<span>').html('_').addClass('blink'))
+  );
 
 var TYPING_TIMEOUT = 100;
 
@@ -73,6 +76,21 @@ var disconnect = function() {
   }
 };
 
+
+var _request = io.util.request;
+
+io.util.request = function() {
+  var req = _request.apply(this, arguments);
+  var _send = req.send;
+  req.send = function() {
+    if (req.setRequestHeader) {
+      req.setRequestHeader('x-tenderloin-api-key', GG.get('tenderloin.api_key'));
+    }
+    _send.apply(this, arguments);
+  }
+  return req;
+};
+
 var connect = function(room) {
   if (!room || room === '') { throw new Error('Must supply an room name'); }
   
@@ -127,17 +145,42 @@ var connect = function(room) {
 };
 
 var on_room_change = function(room, old_room) {
+  console.log('on_room_change: ' + room);
   if (room && room !== '') {
     disconnect();
     connect(room);
   }
 }
 
-GG.on('change:tenderloin.room', on_room_change);
+var chatters = {};
+var check_for_members = function() {
+  $('[role="menuitem"][title$=" profile"]').toArray().forEach(function(e) {
+    var name = $(e).text();
+    if (!chatters[name]) {
+      var $el = $(e).parents('[role="menu"]');
+      chatters[name] = {
+        name: name,
+        el: $el
+      };
+      $el.append($('<div class="profile-wrapper"><img src="' + chrome.extension.getURL('/images/ggbridge_48x48.png') + '" /></div>'));
+    }
+  });
+};
+
+var initialize = function() {
+  GG.on('change:tenderloin.room', on_room_change);
+  
+  on_room_change(GG.get('tenderloin.room'));
+  
+  setInterval(check_for_members, 5 * 1000);
+};
 
 GG.once('initialized', function() {
-  console.log('initialized');
-  on_room_change(GG.get('tenderloin.room'));
+  if (GG.get('tenderloin.url')) {
+    initialize();
+  } else {
+    GG.once('change:tenderloin.url', initialize);
+  }
 });
 
 $('body').append($el);

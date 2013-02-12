@@ -16,18 +16,16 @@ var on_logged_in = function() {
   var self = this;
   
   var render = function(data) {
-    var $el = $(GG.template('logged_in'));
+    var $el = $(GG.template('logged-in'));
     var $organization = $el.find('select.organization');
     var $room = $el.find('select.room');
     
     if (data.organizations) {
-      console.log('Has organizations');
-      fill_select($organization, [{text: 'Pick one', value: '---'}].concat(data.organizations.map(function(org) { return {value: org._id, text: org.name}; })));
+      fill_select($organization, [{text: 'Pick one', value: '---'}].concat(data.organizations.map(function(org) { return {value: org._id + '---' + org.api_key, text: org.name}; })));
       var org = GG.get('tenderloin.organization');
-      if (org) { $organization.find('[value="' + org + '"]').attr('selected', 'selected'); }
+      if (org) { $organization.find('[value^="' + org + '---"]').attr('selected', 'selected'); }
     }
     if (data.rooms) {
-      console.log('Has rooms');
       fill_select($room, [{text: 'Pick one', value: '---'}].concat(data.rooms.map(function(room) { return {value: room._id, text: room.name}; })));
       var room = GG.get('tenderloin.room');
       if (room) { $room.find('[value="' + room + '"]').attr('selected', 'selected'); }
@@ -42,8 +40,12 @@ var on_logged_in = function() {
           'tenderloin.room': null
         });
       } else {
+        var parts = org.split('---');
+        org = parts[0];
+        var api_key = parts[1];
         GG.set({
           'tenderloin.organization': org,
+          'tenderloin.api_key': api_key,
           'tenderloin.room': null
         });
         GG.get_json('/api/organizations/' + org + '/rooms', function(err, rooms) {
@@ -81,12 +83,18 @@ var on_logged_out = function() {
   $('#content').html(GG.template('login'));
 };
 
+var on_change_tenderloin_url = function() {
+  
+};
+
 GG.on('change:tenderloin.logged_in', function(logged_in) {
   logged_in ? on_logged_in() : on_logged_out();
 });
 
-// Check for tenderloin.url
-
 GG.once('initialized', function() {
-  GG.get('tenderloin.logged_in') ? on_logged_in() : on_logged_out();
+  if (!GG.get('tenderloin.url')) {
+    $('#content').html(GG.template('no-tenderloin-url'));
+  } else {
+    GG.get('tenderloin.logged_in') ? on_logged_in() : on_logged_out();
+  }
 });
