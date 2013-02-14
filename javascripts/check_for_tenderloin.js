@@ -5,7 +5,7 @@ var check = function() {
   
   var collected = _(GG.get('tenderloin.collected') || {}).invert();
   collected[url] = 1;
-  GG.set('tenderloin.collected', _(collected).invert());
+  GG.set('tenderloin.collected', _(collected).keys());
   
   if (!GG.get('tenderloin.url')) {
     GG.set('tenderloin.url', url);

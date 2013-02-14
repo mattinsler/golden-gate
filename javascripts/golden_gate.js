@@ -136,7 +136,7 @@ GoldenGate.prototype.get_json = function(url, opts, callback) {
 GoldenGate.prototype.initialize = function() {
   var self = this;
   this.get_state(function(state) {
-    self.state = state;
+    self.state = state || {};
     self.initialized = true;
     self.trigger('initialized');
   });

@@ -47,12 +47,10 @@
   
   "permissions": [
     "cookies",
-    "tabs",
     "storage",
     "background",
-    "webNavigation",
     
-    "http://tenderloin.localhost.dev/*",
-    "http://tenderloin-sf.herokuapp.com/*"
+    "http://*/*",
+    "https://*/*"
   ]
 }

@@ -16,9 +16,17 @@
   </head>
   
   <body>
-    <header>
+    <header class="clearfix">
       <img src="images/ggbridge_48x48.png" />
       Golden Gate
+      <div class="right">
+        <div class="dropdown">
+          <a class="dropdown-toggle" data-toggle="dropdown" href="#">Dropdown trigger<b class="caret"></b></a>
+          <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+            <li><a href="#">tenderloin.localhost.dev</a></li>
+          </ul>
+        </div>
+      </div>
     </header>
     <div class="background">
     </div>
@@ -48,15 +56,15 @@
       </script>
       
       <script type="x-template" name="logged-in">
-        <p class="text-center">
+        <div class="text-center">
           <form>
             <label>Organization</label>
             <select class="organization"></select>
-        
+      
             <label>Room</label>
             <select class="room"></select>
           </form>
-        </p>
+        </div>
       </script>
     </div
   </body>

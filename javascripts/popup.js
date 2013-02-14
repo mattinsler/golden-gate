@@ -81,10 +81,7 @@ var on_logged_in = function() {
 var on_logged_out = function() {
   console.log('on_logged_out');
   $('#content').html(GG.template('login'));
-};
-
-var on_change_tenderloin_url = function() {
-  
+  $('#content a.btn').attr('href', GG.get('tenderloin.url'));
 };
 
 GG.on('change:tenderloin.logged_in', function(logged_in) {

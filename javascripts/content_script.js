@@ -91,6 +91,28 @@ io.util.request = function() {
   return req;
 };
 
+var timeout_id = null;
+
+var ping = function() {
+  GG.socket.emit('ping', {room: GG.get('tenderloin.room')});
+};
+
+var on_connected = function() {
+  console.log('Connected to Tenderloin!');
+  var room = GG.get('tenderloin.room');
+  var parts = room.split(':');
+  set_status('Claimed ' + parts[1] + '/' + parts[2]);
+  
+  ping();
+  timeout_id = setInterval(ping, 2000);
+};
+
+var on_disconnected = function() {
+  clearInterval(timeout_id);
+  timeout_id = null;
+  set_status('Disconnected');
+};
+
 var connect = function(room) {
   if (!room || room === '') { throw new Error('Must supply an room name'); }
   
@@ -107,11 +129,7 @@ var connect = function(room) {
   
   socket.on('connecting', function() { set_status('Connecting...'); });
   
-  socket.on('connect', function() {
-    console.log('Connected to Tenderloin!');
-    var parts = room.split(':');
-    set_status('Claimed ' + parts[1] + '/' + parts[2]);
-  });
+  socket.on('connect', on_connected);
   
   var reconnecting = false;
   var reconnect = function() {
@@ -124,7 +142,7 @@ var connect = function(room) {
         return;
       }
       console.log('Reconnecting');
-      socket.socket.connect();
+      socket.socket.reconnect();
       setTimeout(do_reconnect, 2000);
     };
     do_reconnect();
@@ -135,8 +153,8 @@ var connect = function(room) {
   });
   
   socket.on('disconnect', function() {
-    set_status('Disconnected');
     reconnect();
+    on_disconnected();
   });
   
   socket.on('message', function(data) {
