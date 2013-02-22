@@ -8,9 +8,10 @@
 }
 #golden-gate .wrapper {
   display:inline-block;
-  color: #3a87ad;
-  background: #d9edf7;
-  border: 1px solid #bce8f1;
+/*  color: #3a87ad;*/
+/*  background: #d9edf7;*/
+/*  border: 1px solid #bce8f1;*/
+  color:#666;
   text-align:left;
   
   padding: 5px 15px;

@@ -1,5 +1,18 @@
 GG.on('all', function() { console.log(arguments); });
 
+var _template_cache = {};
+var template = function(name) {
+  return _template_cache[name] || '';
+};
+
+$(function() {
+  _template_cache = _($('#templates [name]').toArray()).inject(function(o, tpl) {
+    o[$(tpl).attr('name')] = $(tpl).html();
+    return o;
+  }, {});
+});
+
+
 var fill_select = function(select, values) {
   var $select = $(select);
   values.forEach(function(v) {
@@ -16,7 +29,7 @@ var on_logged_in = function() {
   var self = this;
   
   var render = function(data) {
-    var $el = $(GG.template('logged-in'));
+    var $el = $(template('logged-in'));
     var $organization = $el.find('select.organization');
     var $room = $el.find('select.room');
     
@@ -80,7 +93,7 @@ var on_logged_in = function() {
 
 var on_logged_out = function() {
   console.log('on_logged_out');
-  $('#content').html(GG.template('login'));
+  $('#content').html(template('login'));
   $('#content a.btn').attr('href', GG.get('tenderloin.url'));
 };
 
@@ -90,8 +103,9 @@ GG.on('change:tenderloin.logged_in', function(logged_in) {
 
 GG.once('initialized', function() {
   if (!GG.get('tenderloin.url')) {
-    $('#content').html(GG.template('no-tenderloin-url'));
+    $('#content').html(template('no-tenderloin-url'));
   } else {
+    $('#server').html(GG.get('tenderloin.url').replace(/^(https?:\/\/| *)/g, '').replace(/[ \/].*/, ''));
     GG.get('tenderloin.logged_in') ? on_logged_in() : on_logged_out();
   }
 });

@@ -19,18 +19,11 @@
     <header class="clearfix">
       <img src="images/ggbridge_48x48.png" />
       Golden Gate
-      <div class="right">
-        <div class="dropdown">
-          <a class="dropdown-toggle" data-toggle="dropdown" href="#">Dropdown trigger<b class="caret"></b></a>
-          <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-            <li><a href="#">tenderloin.localhost.dev</a></li>
-          </ul>
-        </div>
-      </div>
     </header>
+
     <div class="background">
     </div>
-    
+
     <div class="container-fluid">
       <div class="row-fluid">
         <div id="content" class="span12">
@@ -40,7 +33,11 @@
         </div>
       </div>
     </div>
-    
+
+    <footer class="clearfix">
+      Server: <span id="server"></span>
+      <a href="#" class="pull-right">Change</a>
+    </footer>
     
     <div id="templates" style="display:none;">
       <script type="x-template" name="no-tenderloin-url">
@@ -48,24 +45,24 @@
           To initialize Golden Gate, just navigate to your Tenderloin homepage
         </p>
       </script>
-      
+
       <script type="x-template" name="login">
         <p class="text-center">
-          <a href="http://tenderloin.localhost.dev" class="btn btn-primary" target="_blank">Login to Tenderloin</a>
+          <a href="<%= GG.get('tenderloin.url') %>" class="btn btn-primary" target="_blank">Login to Tenderloin</a>
         </p>
       </script>
-      
+
       <script type="x-template" name="logged-in">
         <div class="text-center">
           <form>
             <label>Organization</label>
             <select class="organization"></select>
-      
+
             <label>Room</label>
             <select class="room"></select>
           </form>
         </div>
       </script>
-    </div
+    </div>
   </body>
 </html>

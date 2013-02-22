@@ -30,10 +30,6 @@ function GoldenGate() {
   _(this).extend(Backbone.Events);
 }
 
-GoldenGate.prototype.template = function(name) {
-  return $('#templates [name="' + name + '"]').html();
-};
-
 GoldenGate.prototype.get = function(key) {
   if (key) { return get_nested_value(this.state, key); }
   return this.state;
