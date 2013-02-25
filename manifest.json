@@ -19,7 +19,9 @@
       "javascripts/check_for_tenderloin.js"
     ]
   }, {
-    "matches": ["https://plus.google.com/hangouts/_/*"],
+    "matches": [
+      "https://plus.google.com/hangouts/_/*"
+    ],
     "css": ["stylesheets/content_script.css"],
     "js": [
       // golden-gate comes from above content script

@@ -49,17 +49,17 @@ var on_logged_in = function() {
       $room.empty();
       if (org === '---') {
         GG.set({
-          'tenderloin.organization': null,
-          'tenderloin.room': null
+          'tenderloin.room': null,
+          'tenderloin.organization': null
         });
       } else {
         var parts = org.split('---');
         org = parts[0];
         var api_key = parts[1];
         GG.set({
+          'tenderloin.room': null,
           'tenderloin.organization': org,
-          'tenderloin.api_key': api_key,
-          'tenderloin.room': null
+          'tenderloin.api_key': api_key
         });
         GG.get_json('/api/organizations/' + org + '/rooms', function(err, rooms) {
           if (err) { return console.log(err.stack); }
@@ -108,4 +108,33 @@ GG.once('initialized', function() {
     $('#server').html(GG.get('tenderloin.url').replace(/^(https?:\/\/| *)/g, '').replace(/[ \/].*/, ''));
     GG.get('tenderloin.logged_in') ? on_logged_in() : on_logged_out();
   }
+});
+
+
+var change_server = function() {
+  $select = $('#server-select');
+  fill_select($select, _(GG.get('tenderloin.collected')).values().map(function(url) {
+    return {
+      value: url,
+      text: url.replace(/^(https?:\/\/| *)/g, '').replace(/[ \/].*/, ''),
+      selected: (url === GG.get('tenderloin.url'))
+    };
+  }));
+  
+  $('#change-server-btn').hide();
+  $('#server').hide();
+  $select.show();
+  
+  $select.on('change', function() {
+    GG.set('tenderloin.url', $(this).val());
+    window.close();
+  });
+};
+
+$(function() {
+  $('#change-server-btn').on('click', function(evt) {
+    change_server();
+    evt.preventDefault();
+    return false;
+  });
 });

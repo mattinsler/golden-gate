@@ -37,7 +37,7 @@ GoldenGate.prototype.get = function(key) {
 
 GoldenGate.prototype.set = function(key, value, opts) {
   var self = this;
-  var changed = false;
+  var changes = [];
   
   var _set = function(prefix, obj, opts) {
     var keys = [];
@@ -52,8 +52,7 @@ GoldenGate.prototype.set = function(key, value, opts) {
         var old_value = set_nested_value(self.state, full_key, new_value);
         
         if (new_value !== old_value) {
-          changed = true;
-          self.trigger('change:' + full_key, new_value, old_value);
+          changes.push({key: full_key, new_value: new_value, old_value: old_value});
         }
       }
     });
@@ -70,8 +69,14 @@ GoldenGate.prototype.set = function(key, value, opts) {
   if (!opts) { opts = {}; }
   _set('', o, opts);
   
-  if (changed && !opts.no_save) {
-    this.save_state();
+  if (changes.length > 0) {
+    changes.forEach(function(c) {
+      self.trigger('change:' + c.key, c.new_value, c.old_value);
+    });
+    
+    if (!opts.no_save) {
+      this.save_state();
+    }
   }
 };
 
