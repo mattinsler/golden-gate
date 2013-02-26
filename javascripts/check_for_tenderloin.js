@@ -1,5 +1,6 @@
 var check = function() {
   if ($('meta[name="tenderloin"][content="you know you like it"]').length === 0) { return; }
+  $('body').addClass('golden-gate-installed');
   
   var url = 'http://' + window.location.host;
   

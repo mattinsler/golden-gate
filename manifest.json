@@ -5,6 +5,9 @@
   "version": "1.0.0",
   "description": "All you base are belong to us",
   
+  "update_url": "http://tenderloin.localhost.dev/golden-gate/updates.xml",
+  // "update_url": "http://gettenderloin.com/golden-gate/updates.xml",
+  
   "browser_action": {
     "default_icon": "images/ggbridge_48x48.png",
     "default_popup": "popup.html"

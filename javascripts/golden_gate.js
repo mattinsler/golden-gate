@@ -153,4 +153,6 @@ window.GG = new GoldenGate();
 
 GG.on('error', function(err) { console.error(err.stack); });
 
-GG.initialize();
+$(function() {
+  GG.initialize();
+});
