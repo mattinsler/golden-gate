@@ -2,7 +2,7 @@
   "manifest_version": 2,
   
   "name": "Golden Gate",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "All you base are belong to us",
   
   "update_url": "http://gettenderloin.com/golden-gate/updates.xml",
