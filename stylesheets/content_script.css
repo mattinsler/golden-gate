@@ -1,5 +1,6 @@
 #golden-gate {
   position:absolute;
+  pointer-events:none;
   top:5px;
   left:0;
   right:0;
@@ -8,7 +9,6 @@
 }
 #golden-gate .wrapper {
   display:inline-block;
-  pointer-events:none;
   color:#666;
   text-align:left;
   
