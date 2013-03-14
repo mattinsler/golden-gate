@@ -8,9 +8,7 @@
 }
 #golden-gate .wrapper {
   display:inline-block;
-/*  color: #3a87ad;*/
-/*  background: #d9edf7;*/
-/*  border: 1px solid #bce8f1;*/
+  pointer-events:none;
   color:#666;
   text-align:left;
   
